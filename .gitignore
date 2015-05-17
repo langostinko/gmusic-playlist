@@ -1,0 +1,5 @@
+playlists/*
+*.log
+*.csv
+*.pyc
+tmp.txt

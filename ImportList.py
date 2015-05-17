@@ -173,9 +173,10 @@ input_filename = sys.argv[1].decode('utf-8')
 output_filename = os.path.splitext(input_filename)[0]
 output_filename = re.compile('_\d{14}$').sub(u'',output_filename)
 playlist_name = os.path.basename(output_filename)
+playlist_id = sys.argv[2].decode('utf-8')
 
-output_filename += u'_' + unicode(datetime.datetime.now().strftime(
-    '%Y%m%d%H%M%S'))
+#output_filename += u'_' + unicode(datetime.datetime.now().strftime('%Y%m%d%H%M%S'))
+output_filename = "last_log";
 log_filename = output_filename + u'.log'
 csv_filename = output_filename + u'.csv'
 
@@ -293,6 +294,19 @@ for track in tracks:
 total_time = time.time() - start_time
 
 log('===============================================================')
+log(u'Remove all songs from: ' + playlist_name)
+log('===============================================================')
+
+all_playlists = api.get_all_user_playlist_contents()
+all_playlists = filter(lambda s: s['id'] == playlist_id, all_playlists)
+my_playlist = all_playlists[0]
+entry_ids = []
+for track in my_playlist['tracks']:
+    entry_ids.append(track['id'])
+print len(entry_ids), "songs"
+api.remove_entries_from_playlist(entry_ids)
+
+log('===============================================================')
 log(u'Adding '+unicode(len(song_ids))+' found songs to: '+playlist_name)
 log('===============================================================')
 
@@ -307,7 +321,8 @@ while current_playlist <= total_playlists_needed:
         current_playlist_name += u' Part ' + unicode(current_playlist)
 
     # create the playlist and add the songs
-    playlist_id = api.create_playlist(current_playlist_name)
+    #playlist_id = api.create_playlist(current_playlist_name)
+    print(playlist_id)
     current_playlist_index = ( current_playlist - 1 ) * max_playlist_size
     current_songs = song_ids[current_playlist_index :
                              current_playlist_index + max_playlist_size]
