@@ -3,3 +3,5 @@ playlists/*
 *.csv
 *.pyc
 tmp.txt
+credentials.py
+*.sublime*

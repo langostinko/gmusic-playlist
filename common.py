@@ -4,8 +4,8 @@
 from collections import Counter
 from gmusicapi import Mobileclient
 from preferences import *
+from credentials import *
 import time
-import getpass
 import sys
 import os
 import codecs
@@ -105,7 +105,6 @@ def open_api():
     global api
     log('Logging into google music...')
     # get the password each time so that it isn't stored in plain text
-    password = getpass.getpass(username + '\'s password: ')
     
     api = Mobileclient()
     if not api.login(username, password):
@@ -113,7 +112,6 @@ def open_api():
         time.sleep(3)
         exit()
         
-    password = None
     log('Login Successful.')
     dlog(u'Available track details: '+str(get_google_track_details()))
     return api

@@ -298,6 +298,9 @@ log(u'Remove all songs from: ' + playlist_name)
 log('===============================================================')
 
 all_playlists = api.get_all_user_playlist_contents()
+#for playlist in all_playlists:
+#    print(playlist)
+#exit()
 all_playlists = filter(lambda s: s['id'] == playlist_id, all_playlists)
 my_playlist = all_playlists[0]
 entry_ids = []
