@@ -60,8 +60,10 @@ def plog(message):
 
 # gets the track details available for google tracks
 def get_google_track_details(sample_song = 'one u2'):
-    return (api.search_all_access(sample_song,max_results=1)
-        .get('song_hits')[0].get('track').keys())
+    results = api.search_all_access(sample_song,max_results=1).get('song_hits')
+    if len(results):
+        return (results[0].get('track').keys())
+    return "['title','artist','album']"
 
 # creates result details from the given track
 def create_result_details(track):
@@ -85,6 +87,37 @@ def create_details(details_list):
         details[track_info_order[pos]] = nfo.strip()
     return details
 
+# split a csv line into it's separate fields
+def get_csv_fields(csvString,sepChar=tsep):
+    fields = []
+    fieldValue = u''
+    ignoreTsep = False
+    for c in csvString:
+        if c == sepChar and not ignoreTsep:
+            fields.append(handle_quote_input(fieldValue))
+            fieldValue = u''
+            continue
+        elif c == '"':
+            ignoreTsep = (not ignoreTsep)
+        fieldValue += c
+    fields.append(handle_quote_input(fieldValue))
+    return fields
+
+# add quotes around a csv field and return the quoted field
+def handle_quote_output(aString):
+  """ See: https://en.wikipedia.org/wiki/Comma-separated_values#Basic_rules_and_examples """
+  if aString.find('"') > -1 or aString.find(tsep) > -1:
+    return '"%s"' % aString.replace('"', '""')
+  else:
+    return aString
+
+# remove the quotes from around a csv field, and return the unquoted field
+def handle_quote_input(aString):
+  if len(aString) > 0 and aString[0] == '"' and aString[-1] == '"':
+      return aString[1:-1].replace('""', '"')
+  else:
+      return aString
+
 # creates details string based off the given details dictionary
 def create_details_string(details_dict, skip_id = False):
     out_string = u''
@@ -94,7 +127,7 @@ def create_details_string(details_dict, skip_id = False):
         if len(out_string) != 0:
             out_string += track_info_separator
         try:
-            out_string += unicode(details_dict[nfo])
+            out_string += handle_quote_output(unicode(details_dict[nfo]))
         except KeyError:
             # some songs don't have info like year, genre, etc
             pass
@@ -107,7 +140,7 @@ def open_api():
     # get the password each time so that it isn't stored in plain text
     
     api = Mobileclient()
-    if not api.login(username, password, ""):
+    if not api.login(username, password, Mobileclient.FROM_MAC_ADDRESS):
         log('ERROR unable to login')
         time.sleep(3)
         exit()

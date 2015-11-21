@@ -1,5 +1,6 @@
 # the separator to use for detailed track information
-track_info_separator = u'\\'
+track_info_separator = u','
+#track_info_separator = u'\\'
 #track_info_separator = u'|'
 
 # the order of the track details
@@ -37,3 +38,6 @@ log_high_matches = False
 
 # export "Thumbs Up" playlist
 export_thumbs_up = True
+
+# export "ALL" playlist
+export_all = True
