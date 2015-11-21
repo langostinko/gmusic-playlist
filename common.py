@@ -107,7 +107,7 @@ def open_api():
     # get the password each time so that it isn't stored in plain text
     
     api = Mobileclient()
-    if not api.login(username, password):
+    if not api.login(username, password, ""):
         log('ERROR unable to login')
         time.sleep(3)
         exit()
